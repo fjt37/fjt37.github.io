@@ -32,6 +32,7 @@ body {
     height: 200px;
     border-radius: 100px;
     overflow: hidden;
+    background-color: grey; /*so it shows up if no image */
 }
 
 hr {
@@ -69,7 +70,6 @@ button:hover {
 /* Landing page */
 
 #profile-pic {
-    background-color: grey;
     background-image: url("../img/profile_pic.jpg");
     background-size: 200px auto;
     background-position: 0 -10px;
