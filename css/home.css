@@ -10,6 +10,17 @@
 }
 
 a {
-    display: inline-block;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
     text-decoration: none;
+    width: 130px;
+}
+
+button {
+    width: 100%;
+}
+
+button:focus {
+    outline: none;
 }

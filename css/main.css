@@ -46,13 +46,14 @@ button {
     padding: 10px 14px;
     background-color: #333;
     border: none;
+    border-bottom: 1px solid white;
     color: white;
-    transition-duration: 200ms;
+    transition-duration: 250ms;
 }
 button:hover {
     cursor: pointer;
     background-color: white;
-    border-bottom: 1px solid #333;
     color: #333;
+    border-bottom-color: #333;
 }
 
