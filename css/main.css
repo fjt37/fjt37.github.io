@@ -47,8 +47,9 @@ p {
     display: block;
     width: 50%;
     margin: auto;
-    text-align: justify;
-    text-align-last: center;
+    /*text-align: justify;*/
+    /*text-align-last: center;*/
+    text-align: center;
 }
 
 button {
