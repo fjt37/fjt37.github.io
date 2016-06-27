@@ -54,18 +54,20 @@ p {
 
 button {
     padding: 10px 14px;
-    padding-bottom: 9px;
     background-color: #333;
-    border: none;
-    border-bottom: 1px solid #333;
     color: white;
+    border: none;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
     transition-duration: 250ms;
+    padding-bottom: 9px;
+    border-bottom: 1px solid #333;
 }
 button:hover {
     cursor: pointer;
     background-color: white;
     color: #333;
-    border-bottom-color: #333;
+    border-radius: 0;
 }
 
 /* Landing page */
