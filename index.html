@@ -3,51 +3,63 @@
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="js/easter_egg.js" type="text/javascript"></script>
+    <script src="js/game.js" type="text/javascript"></script>
     <link rel="stylesheet" href="css/main.css" type="text/css">
     <title>Jay Tappen</title>
 </head>
 <body>
     
+    <!-- header -->
     <div id="profile-pic" class="circle-pic space-under"></div>
-
     <div id="my-name" class="space-under">
         Jay Tappen
     </div>
-
     <div class="tagline space-under">
         A cheerful student
     </div>
-
     <hr class="space-under">
 
-    <p class="space-under">
-        Hello!
-    </p>
-    <p class="space-under">
-        Here's a little about me.
-        I grew up in a small suburb of Boston with a close family of four. 
-        I love to be outside, especially with friends, family, or a good book. 
-        If I'm inside, I'll usually be reading, chatting, playing videogames, or coding. 
-        I discovered coding in high school, and it has become a passion and focus of my life. 
-        I am now in the computer science program at Cornell University. 
-        If you are reading this and you hire people like me, please feel free to reach out. 
-        My contact information is on my resum&eacute;.
-    </p>
-    <p class="space-under">
-        <span class="easter-egg" data-egg-num=0>&#x2744;</span> Thank You <span class="easter-egg" data-egg-num=1>&#x2744;</span>
-    </p>
+    <!-- my bio -->
+    <div id="bio">
+        <p class="space-under">
+            Hello!
+        </p>
+        <p class="space-under">
+            Here's a little about me.
+            I grew up in a small suburb of Boston with a close family of four. 
+            I love to be outside, especially with friends, family, or a good book. 
+            If I'm inside, I'll usually be reading, chatting, playing videogames, or coding. 
+            I discovered coding in high school, and it has become a passion and focus of my life. 
+            I am now in the computer science program at Cornell University. 
+            If you are reading this and you hire people like me, please feel free to reach out. 
+            My contact information is on my resum&eacute;.
+        </p>
+        <p class="space-under">
+            <span class="easter-egg" data-egg-num=0>&#x2744;</span> Thank You <span class="easter-egg" data-egg-num=1>&#x2744;</span>
+        </p>
+        <hr class="space-under">
+    </div>
 
-    <hr class="space-under">
+    <!-- main buttons -->
+    <a class="button space-under" href="https://linkedin.com/in/jaytappen" target="_blank">
+        LinkedIn
+    </a>
+    <a class="button space-under" href="resources/Jay_Tappen_Resume.pdf" target="_blank">
+        Resum&eacute;
+    </a>
+    <a class="button space-under" href="https://github.com/fjt37" target="_blank">
+        GitHub
+    </a>
+    <a id="game-button" class="button space-under">
+        Game
+    </a>
 
-    <a class="profile-button space-under" href="https://linkedin.com/in/jaytappen" target="_blank">
-        <button>LinkedIn</button>
-    </a>
-    <a class="profile-button space-under" href="resources/Jay_Tappen_Resume.pdf" target="_blank">
-        <button>Resum&eacute;</button>
-    </a>
-    <a class="profile-button space-under" href="https://github.com/fjt37" target="_blank">
-        <button>GitHub</button>
-    </a>
+    <!-- blank canvas for game. starts hidden -->
+    <div id="game">
+        <hr class="space-under">
+        <canvas id="game" class="space-under"></canvas>
+    </div>
+
 
 </body>
 </html>

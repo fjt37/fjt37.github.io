@@ -16,6 +16,13 @@ body {
     padding-top: 7vh;
 }
 
+hr {
+    display: block;
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    border-top: 1px solid #333;
+}
 
 .space-under {
     margin-bottom: 15px;
@@ -35,43 +42,6 @@ body {
     background-color: grey; /*so it shows up if no image */
 }
 
-hr {
-    display: block;
-    width: 60%;
-    margin-left: auto;
-    margin-right: auto;
-    border-top: 1px solid #333;
-}
-
-p {
-    display: block;
-    width: 50%;
-    margin: auto;
-    /*text-align: justify;*/
-    /*text-align-last: center;*/
-    text-align: center;
-}
-
-button {
-    padding: 10px 14px;
-    background-color: #333;
-    color: white;
-    border: none;
-    border-top-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    transition-duration: 250ms;
-    padding-bottom: 9px;
-    border-bottom: 1px solid #333;
-}
-button:hover {
-    cursor: pointer;
-    background-color: white;
-    color: #333;
-    border-radius: 0;
-}
-
-/* Landing page */
-
 #profile-pic {
     background-image: url("../img/profile_pic.jpg");
     background-size: 200px auto;
@@ -82,16 +52,42 @@ button:hover {
     font-size: 24pt;
 }
 
-.profile-button {
+p {
+    width: 50%;
+    margin: auto;
+    color: #666;
+    text-align: center;
+}
+
+a.button {
     display: inline-block;
-    text-decoration: none;
     width: 130px;
+    padding: 10px 14px;
+    text-decoration: none;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    transition-duration: 250ms;
+    padding-bottom: 9px;
+    border-bottom: 1px solid #333;
+}
+a.button:hover {
+    cursor: pointer;
+    background-color: white;
+    color: #333;
+    border-radius: 0;
 }
 
-.profile-button > button {
-    width: 100%;
+#game {
+    display: none;
 }
 
-.profile-button > button:focus {
-    outline: none;
+#game > canvas {
+    display: block;
+    margin: auto;
+    width: 50vw;
+    height: 40vh;
+    background-color: #CCC;
 }
