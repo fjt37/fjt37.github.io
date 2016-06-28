@@ -89,5 +89,6 @@ a.button:hover {
     margin: auto;
     width: 50vw;
     height: 40vh;
-    background-color: #CCC;
+    /*background-color: #CCC;*/
+    border: 3px double #333;
 }
