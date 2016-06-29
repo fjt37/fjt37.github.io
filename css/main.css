@@ -7,13 +7,14 @@
 }
 
 html {
-    border-top: 4vh solid #333;
+    border-top: 30px solid #333;
+    min-width: 300px;
 }
 
 body {
     text-align: center;
-    border-top: 3vh solid #555;
-    padding-top: 7vh;
+    border-top: 24px solid #555;
+    padding-top: 7%;
 }
 
 hr {
@@ -82,13 +83,12 @@ a.button:hover {
 
 #game {
     display: none;
+    text-align: center;
 }
-
+#game:focus {
+    outline: none;
+}
 #game > canvas {
-    display: block;
-    margin: auto;
-    width: 50vw;
-    height: 40vh;
-    /*background-color: #CCC;*/
+    display: inline-block;
     border: 3px double #333;
 }
