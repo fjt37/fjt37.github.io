@@ -18,7 +18,7 @@ $(document).ready(function() {
             $("#game").fadeOut(transition_duration, function () {
                 $("#bio").slideDown(transition_duration);
                 $("#game-button").text("Game");
-                end_game(); // see game/game.js
+                quit_game(); // see game/game.js
             });
         }
     });

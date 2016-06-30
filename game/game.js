@@ -4,7 +4,8 @@ var game_states = {
     NONE    : 0,
     CREATED : 1,
     PLAYING : 2,
-    PAUSED  : 3
+    PAUSED  : 3,
+    OVER    : 4
 };
 
 var dirs = {
@@ -24,8 +25,8 @@ var dir_vectors = {
 };
 
 var guy_frames = {
-    no_feet_delay : 80, // time to wait on frame with no feet frame between steps
-    total_step_delay : 240, // time between steps, including no feet
+    NO_FEET_DELAY : 80, // time to pend on frame with no feet
+    FEET_DELAY : 130, // time to spend on each frame with feet
     LEFT : [
         $("<img src='game/assets/left_guy.png'>")[0],
         $("<img src='game/assets/left_guy_step_1.png'>")[0],
@@ -72,15 +73,6 @@ var game_state = game_states.NONE; // should be set to a value of game_states
 // current state of character
 var guy;
 
-function animate_guy() {
-    // set to picture with no feet
-    guy.current_frame += 1;
-    // after delay, go to next step
-    setTimeout(function() {
-        guy.current_frame = (guy.current_frame + 1) % 4;
-    }, guy_frames.no_feet_delay);
-}
-
 // prints a string to the canvas
 function ctx_write(s, x, y) {
     ctx.fillText(s, x, y);
@@ -91,17 +83,23 @@ function game_controls(e) {
     e.preventDefault();
     if (e.keyCode == 32 && game_state == game_states.CREATED) { // spacebar
         start_game();
-    } else if (e.keyCode == 32 && game_state == game_states.PLAYING) { // spacebar
-       game_state = game_states.PAUSED;
-    } else if (e.keyCode == 32 && game_state == game_states.PAUSED) { // spacebar
-       game_state = game_states.PLAYING;
-    } else if (e.keyCode == 37 && game_state == game_states.PLAYING && guy.dir != dirs.RIGHT) { // left arrow key
+    }
+    else if (e.keyCode == 32 && game_state == game_states.PLAYING) { // spacebar
+        pause_game();
+    }
+    else if (e.keyCode == 32 && game_state == game_states.PAUSED) { // spacebar
+        resume_game();
+    }
+    else if (e.keyCode == 37 && game_state == game_states.PLAYING && guy.dir != dirs.RIGHT) { // left arrow key
         guy.dir = dirs.LEFT;
-    } else if (e.keyCode == 38 && game_state == game_states.PLAYING && guy.dir != dirs.DOWN) { // up arrow key
+    }
+    else if (e.keyCode == 38 && game_state == game_states.PLAYING && guy.dir != dirs.DOWN) { // up arrow key
         guy.dir= dirs.UP;
-    } else if (e.keyCode == 39 && game_state == game_states.PLAYING && guy.dir != dirs.LEFT) { // right arrow key
+    }
+    else if (e.keyCode == 39 && game_state == game_states.PLAYING && guy.dir != dirs.LEFT) { // right arrow key
         guy.dir = dirs.RIGHT;
-    } else if (e.keyCode == 40 && game_state == game_states.PLAYING && guy.dir != dirs.UP) { // down arrow key
+    }
+    else if (e.keyCode == 40 && game_state == game_states.PLAYING && guy.dir != dirs.UP) { // down arrow key
         guy.dir= dirs.DOWN;
     }
 }
@@ -119,56 +117,84 @@ function create_game() {
     ctx.textAlign = "center";
     ctx.strokeStyle = "#FFF";
     ctx.fillStyle = "#000";
-    // draw initial text
-    ctx_write("Press the spacebar to begin.", 50 * w, 10 + font_size);
-    ctx_write("Use the arrow keys to change direction.", 50 * w, 40 + font_size);
-    ctx_write("Don't die!", 50 * w, 70 + font_size);
     // initialize guy
     guy = {
-        speed: BASE_SPEED,
+        speed: BASE_SPEED, // pc to move each frame
         pos: [0, 0], // [x position (from left), y position (from top)] in px
         dir: dirs.UP, // [x direction(1 right, -1 left), y direction (1 up, -1 down)]
-        current_frame: 0
+        current_frame: 0, // current anumation frame
     };
-    guy.pos = [50 * w - 16, 100 * h - 40];
-    ctx.drawImage(guy_frames[dirs.UP][0], guy.pos[0], guy.pos[1]);
-
-    // create a second invisible canvas to predraw every frame on, helps reduce screen flash
+    // create a second invisible canvas to predraw every frame on, helps reduce screen flicker
     predraw_canvas = canvas.clone()[0];
     predraw_ctx = predraw_canvas.getContext("2d");
     predraw_ctx.fillStyle = "#FFF";
 
     game_state = game_states.CREATED;
-    console.log("game created");
-    console.log(game_state);
-}
 
-function start_game() {
-    console.log("starting game");
-    game_state = game_states.PLAYING;
-    guy_animation = setInterval(animate_guy, guy_frames.total_step_delay);
+    guy_animation = setTimeout(animate_guy, 0);
     game_update = setInterval(update_game, FRAME_DELAY);
 }
 
+function animate_guy() {
+    // go to next frame
+    guy.current_frame = (guy.current_frame + 1) % 4;
+    // determine animation speed (delay each frame by a factor of frame_speed)
+    var frame_speed = 1;
+    if (game_state == game_states.CREATED)
+        frame_speed =3;
+    // after delay, recurse
+    var this_frame_delay = guy.current_frame % 2 ? guy_frames.FEET_DELAY : guy_frames.NO_FEET_DELAY;
+    guy_animation = setTimeout(animate_guy, this_frame_delay * frame_speed);
+}
+
 function update_game() {
-    console.log(game_state);
-    if (game_state == game_states.PAUSED) {
-        // draw pause screen
+    if (game_state == game_states.CREATED) {
+        ctx_write("Press the spacebar to begin.", 50 * w, 10 + font_size);
+        ctx_write("Use the arrow keys to change direction.", 50 * w, 40 + font_size);
+        ctx_write("Don't hit anything!", 50 * w, 70 + font_size);
+        guy.pos = [50 * w - 16, 100 * h - 40];
+        ctx.drawImage(guy_frames[dirs.UP][guy.current_frame], guy.pos[0], guy.pos[1]);
+    }
+    else if (game_state == game_states.PAUSED) {
         ctx_write("PAUSED", w * 50, h * 50 - font_size / 2);
         return;
     }
-    predraw_ctx.fillRect(0, 0, 100 * w, 100 * h);
-    guy.pos[0] += dir_vectors[guy.dir][0] * guy.speed;
-    guy.pos[1] -= dir_vectors[guy.dir][1] * guy.speed;
-    predraw_ctx.drawImage(guy_frames[guy.dir][guy.current_frame], guy.pos[0], guy.pos[1]);
+    else if (game_state == game_states.OVER) {
+        ctx_write("GAME OVER", w * 50, h * 50 - font_size / 2);
+        return;
+    }
+    else {
+        // clear screen
+        predraw_ctx.fillRect(0, 0, 100 * w, 100 * h);
+        // move character
+        guy.pos[0] += dir_vectors[guy.dir][0] * guy.speed;
+        guy.pos[1] -= dir_vectors[guy.dir][1] * guy.speed;
+        // draw character
+        predraw_ctx.drawImage(guy_frames[guy.dir][guy.current_frame], guy.pos[0], guy.pos[1]);
+    }
+
+    // draw predrawn canvas on game canvas
+    // this way, the whole frame paints at once, and without any flash of white
     ctx.drawImage(predraw_canvas, 0, 0);
 }
 
-function end_game() {
-    console.log("ending game...");
+function start_game() {
+    game_state = game_states.PLAYING;
+    clearTimeout(guy_animation);
+    guy_animation = setTimeout(animate_guy, 0);
+}
+
+function pause_game() {
+    game_state = game_states.PAUSED;
+}
+
+function resume_game() {
+    game_state = game_states.PLAYING;
+}
+
+function quit_game() {
     game_state = game_states.NONE;
-    clearInterval(guy_animation);
+    clearTimeout(guy_animation);
     clearInterval(game_update);
     $("#game > canvas").remove();
-    console.log("game ended");
 }

@@ -6,7 +6,6 @@ $(document).ready(function() {
     ];
 
     $(".easter-egg").click(function() {
-        console.log($(this).data("egg-num"));
         var egg = eggs[$(this).data("egg-num")];
         if ($("body").has(egg).length) {
             egg.remove();
