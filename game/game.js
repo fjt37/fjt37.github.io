@@ -1,5 +1,12 @@
 // CONSTANTS //
 
+var game_states = {
+    NONE    : 0,
+    CREATED : 1,
+    PLAYING : 2,
+    PAUSED  : 3
+};
+
 var dirs = {
     //NONE  : "NONE",
     LEFT  : "LEFT",
@@ -46,7 +53,8 @@ var guy_frames = {
 
 };
 
-BASE_SPEED = 7;
+var BASE_SPEED = 7;
+var FRAME_DELAY = 30; // ms between frames
 
 // VARS //
 var canvas; // canvas to show the game (this will be a jquery object)
@@ -55,10 +63,11 @@ var predraw_canvas; // canvas to predraw each next frame of the game, to reduce 
 var predraw_ctx;    // 2d context of predraw_canvas
 var w; // one width unit = canvas width / 100
 var h; // one height unit = canvas height / 100
-var frame_delay = 30; // ms between frames
-var playing = false; // whether the game is currently in action
-var guy_animation = null; // interval for animating character
-var game_update = null; // interval for updating game
+var guy_animation = 0; // interval id for animating character
+var game_update = 0; // interval id for updating game
+var font_size;
+
+var game_state = game_states.NONE; // should be set to a value of game_states
 
 // current state of character
 var guy;
@@ -72,37 +81,48 @@ function animate_guy() {
     }, guy_frames.no_feet_delay);
 }
 
-function controls(e) {
-    if (e.keyCode == 32 && !playing) { // spacebar
+// prints a string to the canvas
+function ctx_write(s, x, y) {
+    ctx.fillText(s, x, y);
+    // ctx.strokeText(s, x, y);
+}
+
+function game_controls(e) {
+    e.preventDefault();
+    if (e.keyCode == 32 && game_state == game_states.CREATED) { // spacebar
         start_game();
-    //} else if (e.keyCode == 32) { // spacebar
-    //    guy.dir = dirs.NONE;
-    } else if (e.keyCode == 37 && playing && guy.dir != dirs.RIGHT) { // left arrow key
+    } else if (e.keyCode == 32 && game_state == game_states.PLAYING) { // spacebar
+       game_state = game_states.PAUSED;
+    } else if (e.keyCode == 32 && game_state == game_states.PAUSED) { // spacebar
+       game_state = game_states.PLAYING;
+    } else if (e.keyCode == 37 && game_state == game_states.PLAYING && guy.dir != dirs.RIGHT) { // left arrow key
         guy.dir = dirs.LEFT;
-    } else if (e.keyCode == 38 && playing && guy.dir != dirs.DOWN) { // up arrow key
+    } else if (e.keyCode == 38 && game_state == game_states.PLAYING && guy.dir != dirs.DOWN) { // up arrow key
         guy.dir= dirs.UP;
-    } else if (e.keyCode == 39 && playing && guy.dir != dirs.LEFT) { // right arrow key
+    } else if (e.keyCode == 39 && game_state == game_states.PLAYING && guy.dir != dirs.LEFT) { // right arrow key
         guy.dir = dirs.RIGHT;
-    } else if (e.keyCode == 40 && playing && guy.dir != dirs.UP) { // down arrow key
+    } else if (e.keyCode == 40 && game_state == game_states.PLAYING && guy.dir != dirs.UP) { // down arrow key
         guy.dir= dirs.DOWN;
     }
 }
 
 function create_game() {
     console.log("creating game...");
-    playing = false;
     // create canvas
     canvas = $("<canvas></canvas>").appendTo($("#game"));
     canvas.attr('height', window.innerHeight * 0.4).attr('width', window.innerWidth * 0.5);
     ctx = canvas[0].getContext("2d");
-    ctx.font = "20px Courier";
-    ctx.textAlign = "center";
     w = canvas.attr('width') * 0.01;
     h = canvas.attr('height') * 0.01;
+    font_size = Math.min(w * 3, h * 6);
+    ctx.font = font_size + "px Courier";
+    ctx.textAlign = "center";
+    ctx.strokeStyle = "#FFF";
+    ctx.fillStyle = "#000";
     // draw initial text
-    ctx.fillText("Press the spacebar to begin.", 50 * w, 30);
-    ctx.fillText("Use the arrow keys to change direction.", 50 * w, 60);
-    ctx.fillText("Don't die!", 50 * w, 90);
+    ctx_write("Press the spacebar to begin.", 50 * w, 10 + font_size);
+    ctx_write("Use the arrow keys to change direction.", 50 * w, 40 + font_size);
+    ctx_write("Don't die!", 50 * w, 70 + font_size);
     // initialize guy
     guy = {
         speed: BASE_SPEED,
@@ -111,7 +131,6 @@ function create_game() {
         current_frame: 0
     };
     guy.pos = [50 * w - 16, 100 * h - 40];
-    console.log(guy_frames[dirs.UP][0]);
     ctx.drawImage(guy_frames[dirs.UP][0], guy.pos[0], guy.pos[1]);
 
     // create a second invisible canvas to predraw every frame on, helps reduce screen flash
@@ -119,17 +138,25 @@ function create_game() {
     predraw_ctx = predraw_canvas.getContext("2d");
     predraw_ctx.fillStyle = "#FFF";
 
-    $("#game").keydown(controls);
+    game_state = game_states.CREATED;
     console.log("game created");
+    console.log(game_state);
 }
 
 function start_game() {
-    playing = true;
+    console.log("starting game");
+    game_state = game_states.PLAYING;
     guy_animation = setInterval(animate_guy, guy_frames.total_step_delay);
-    game_update = setInterval(update_game, frame_delay);
+    game_update = setInterval(update_game, FRAME_DELAY);
 }
 
 function update_game() {
+    console.log(game_state);
+    if (game_state == game_states.PAUSED) {
+        // draw pause screen
+        ctx_write("PAUSED", w * 50, h * 50 - font_size / 2);
+        return;
+    }
     predraw_ctx.fillRect(0, 0, 100 * w, 100 * h);
     guy.pos[0] += dir_vectors[guy.dir][0] * guy.speed;
     guy.pos[1] -= dir_vectors[guy.dir][1] * guy.speed;
@@ -139,9 +166,9 @@ function update_game() {
 
 function end_game() {
     console.log("ending game...");
-    playing = false;
+    game_state = game_states.NONE;
     clearInterval(guy_animation);
     clearInterval(game_update);
-    $("#game").empty("canvas");
+    $("#game > canvas").remove();
     console.log("game ended");
 }

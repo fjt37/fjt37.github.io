@@ -23,4 +23,6 @@ $(document).ready(function() {
         }
     });
 
+    $("#game").on("keydown", game_controls); // see game/game.js
+
 })
